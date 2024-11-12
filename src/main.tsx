@@ -1,10 +1,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./index.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { YosoThemeProvider } from "yoso-ui";
+
 import MainLayout from "./layout/mainLayout.tsx";
 import { NAVIGATOR_LIST } from "./constance";
-import { YosoThemeProvider } from "yoso-ui";
+import "./index.css";
+
+const queryClient = new QueryClient();
 
 async function prepare() {
   if (import.meta.env.MODE === "development") {
@@ -18,15 +22,17 @@ prepare().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <YosoThemeProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              {NAVIGATOR_LIST.map(({ path, element: Element }) => (
-                <Route key={path} path={path} element={<Element />} />
-              ))}
-            </Route>
-          </Routes>
-        </BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<MainLayout />}>
+                {NAVIGATOR_LIST.map(({ path, element: Element }) => (
+                  <Route key={path} path={path} element={<Element />} />
+                ))}
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </QueryClientProvider>
       </YosoThemeProvider>
     </StrictMode>
   );
